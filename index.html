@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Visualizer - Interactive Learning Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --accent-color: #00ffff;
+            --accent-secondary: #ff00ff;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --card-bg: rgba(26, 26, 26, 0.8);
+            --border-color: rgba(0, 255, 255, 0.3);
+            --success-color: #00ff88;
+            --warning-color: #ffaa00;
+            --error-color: #ff4444;
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #f0f0f0;
+            --secondary-bg: #ffffff;
+            --accent-color: #0066cc;
+            --accent-secondary: #cc0066;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: rgba(0, 102, 204, 0.3);
+            --success-color: #00aa44;
+            --warning-color: #cc8800;
+            --error-color: #cc2222;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 255, 0.1) 0%, 
+                rgba(255, 0, 255, 0.1) 25%, 
+                rgba(0, 255, 127, 0.1) 50%, 
+                rgba(255, 127, 0, 0.1) 75%, 
+                rgba(127, 0, 255, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.5s infinite;
+            color: var(--accent-color);
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.5s infinite;
+            color: var(--accent-secondary);
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% { transform: translate(0); }
+            15%, 49% { transform: translate(-2px, 2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 20%, 21%, 62%, 63%, 99%, 100% { transform: translate(0); }
+            21%, 62% { transform: translate(2px, -2px); }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary), var(--success-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .topic-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .topic-card:hover::before {
+            left: 100%;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+            border-color: var(--accent-color);
+        }
+
+        .topic-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .topic-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .topic-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .topic-links a {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 20px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .topic-links a:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: scale(1.05);
+        }
+
+        .visualization-area {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .array-container {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .array-element {
+            width: 60px;
+            height: 60px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .array-element.comparing {
+            background: var(--warning-color);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+        }
+
+        .array-element.swapping {
+            background: var(--error-color);
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+
+        .array-element.sorted {
+            background: var(--success-color);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .code-explanation {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-line {
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .code-line.active {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .notes-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            height: 200px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .close:hover {
+            color: var(--accent-color);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .speed-slider {
+            width: 150px;
+            height: 5px;
+            background: var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .algorithm-info {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .complexity-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0.25rem;
+            font-weight: bold;
+        }
+
+        .complexity-time {
+            background: rgba(0, 255, 255, 0.2);
+            color: var(--accent-color);
+        }
+
+        .complexity-space {
+            background: rgba(255, 0, 255, 0.2);
+            color: var(--accent-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .array-element {
+                width: 40px;
+                height: 40px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="animated-bg"></div>
+    <div class="floating-particles"></div>
+    
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo glitch" data-text="DSA Visualizer">DSA Visualizer</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="sorting.html">Sorting</a></li>
+                <li><a href="searching.html">Searching</a></li>
+                <li><a href="trees.html">Trees</a></li>
+                <li><a href="graphs.html">Graphs</a></li>
+                <li><a href="notes.html">Notes</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="hero">
+            <h1 class="glitch" data-text="Master Data Structures & Algorithms">Master Data Structures & Algorithms</h1>
+            <p>Interactive visualizations, step-by-step explanations, and practice problems all in one place</p>
+        </section>
+
+        <section class="topics-grid">
+            <div class="topic-card" onclick="openTopic('sorting')">
+                <h3>Sorting Algorithms</h3>
+                <p>Visualize bubble sort, quick sort, merge sort, and more with step-by-step animations</p>
+                <div class="topic-links">
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://leetcode.com/tag/sorting/', '_blank')">LeetCode</a>
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://www.geeksforgeeks.org/sorting-algorithms/', '_blank')">GeeksforGeeks</a>
+                </div>
+            </div>
+
+            <div class="topic-card" onclick="openTopic('searching')">
+                <h3>Searching Algorithms</h3>
+                <p>Learn binary search, linear search, and advanced searching techniques</p>
+                <div class="topic-links">
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://leetcode.com/tag/binary-search/', '_blank')">LeetCode</a>
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://www.geeksforgeeks.org/searching-algorithms/', '_blank')">GeeksforGeeks</a>
+                </div>
+            </div>
+
+            <div class="topic-card" onclick="openTopic('trees')">
+                <h3>Tree Data Structures</h3>
+                <p>Explore binary trees, BST, AVL trees, and tree traversal algorithms</p>
+                <div class="topic-links">
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://leetcode.com/tag/tree/', '_blank')">LeetCode</a>
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://www.geeksforgeeks.org/binary-tree-data-structure/', '_blank')">GeeksforGeeks</a>
+                </div>
+            </div>
+
+            <div class="topic-card" onclick="openTopic('graphs')">
+                <h3>Graph Algorithms</h3>
+                <p>Understand DFS, BFS, shortest path algorithms, and graph representations</p>
+                <div class="topic-links">
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://leetcode.com/tag/graph/', '_blank')">LeetCode</a>
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/', '_blank')">GeeksforGeeks</a>
+                </div>
+            </div>
+
+            <div class="topic-card" onclick="openTopic('arrays')">
+                <h3>Array Operations</h3>
+                <p>Master array manipulation, two pointers, sliding window, and more</p>
+                <div class="topic-links">
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://leetcode.com/tag/array/', '_blank')">LeetCode</a>
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://www.geeksforgeeks.org/array-data-structure/', '_blank')">GeeksforGeeks</a>
+                </div>
+            </div>
+
+            <div class="topic-card" onclick="openTopic('dp')">
+                <h3>Dynamic Programming</h3>
+                <p>Learn memoization, tabulation, and solve complex DP problems</p>
+                <div class="topic-links">
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://leetcode.com/tag/dynamic-programming/', '_blank')">LeetCode</a>
+                    <a href="#" onclick="event.stopPropagation(); window.open('https://www.geeksforgeeks.org/dynamic-programming/', '_blank')">GeeksforGeeks</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="visualization-area">
+            <h2>Interactive Visualization</h2>
+            <div class="algorithm-info">
+                <h3 id="algo-name">Select an algorithm to get started</h3>
+                <p id="algo-description">Choose a topic from above to see interactive visualizations</p>
+                <div id="complexity-info"></div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" onclick="generateArray()">Generate Array</button>
+                <button class="btn btn-secondary" onclick="startVisualization()">Start Visualization</button>
+                <button class="btn btn-secondary" onclick="pauseVisualization()">Pause</button>
+                <button class="btn btn-secondary" onclick="resetVisualization()">Reset</button>
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" class="speed-slider" min="1" max="10" value="5" id="speed-slider">
+                </div>
+            </div>
+
+            <div class="array-container" id="array-container">
+                <!-- Array elements will be generated here -->
+            </div>
+
+            <div class="code-explanation">
+                <h3>Code Explanation</h3>
+                <div id="code-display">
+                    <div class="code-line">// Select an algorithm to see the code explanation</div>
+                    <div class="code-line">// The active line will be highlighted as the algorithm runs</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="notes-section">
+            <h2>Personal Notes</h2>
+            <textarea class="notes-textarea" id="notes-textarea" placeholder="Write your notes here... They will be saved automatically!"></textarea>
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-primary" onclick="saveNotes()">Save Notes</button>
+                <button class="btn btn-secondary" onclick="clearNotes()">Clear Notes</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for detailed topic view -->
+    <div id="topic-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentArray = [];
+        let isVisualizing = false;
+        let visualizationSpeed = 500;
+        let currentAlgorithm = null;
+        let animationId = null;
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            
+            const toggleButton = document.querySelector('.theme-toggle');
+            toggleButton.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const particleContainer = document.querySelector('.floating-particles');
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particleContainer.appendChild(particle);
+            }
+        }
+
+        // Generate random array
+        function generateArray() {
+            const container = document.getElementById('array-container');
+            const arraySize = 10;
+            currentArray = [];
+            
+            container.innerHTML = '';
+            
+            for (let i = 0; i < arraySize; i++) {
+                const value = Math.floor(Math.random() * 100) + 1;
+                currentArray.push(value);
+                
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = value;
+                element.id = `element-${i}`;
+                container.appendChild(element);
+            }
+        }
+
+        // Bubble Sort Algorithm with visualization
+        async function bubbleSort() {
+            const arr = [...currentArray];
+            const n = arr.length;
+            
+            const code = [
+                "function bubbleSort(arr) {",
+                "    let n = arr.length;",
+                "    for (let i = 0; i < n - 1; i++) {",
+                "        for (let j = 0; j < n - i - 1; j++) {",
+                "            if (arr[j] > arr[j + 1]) {",
+                "                // Swap elements",
+                "                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];",
+                "            }",
+                "        }",
+                "    }",
+                "    return arr;",
+                "}"
+            ];
+            
+            updateCodeDisplay(code);
+            
+            for (let i = 0; i < n - 1; i++) {
+                highlightCodeLine(2);
+                await sleep(visualizationSpeed);
+                
+                for (let j = 0; j < n - i - 1; j++) {
+                    highlightCodeLine(3);
+                    await sleep(visualizationSpeed);
+                    
+                    // Highlight elements being compared
+                    highlightElements([j, j + 1], 'comparing');
+                    highlightCodeLine(4);
+                    await sleep(visualizationSpeed);
+                    
+                    if (arr[j] > arr[j + 1]) {
+                        highlightCodeLine(6);
+                        await sleep(visualizationSpeed);
+                        
+                        // Swap elements
+                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                        highlightElements([j, j + 1], 'swapping');
+                        await swapElements(j, j + 1);
+                        await sleep(visualizationSpeed);
+                    }
+                    
+                    // Remove highlighting
+                    removeHighlight([j, j + 1]);
+                }
+                
+                // Mark last element as sorted
+                highlightElements([n - 1 - i], 'sorted');
+            }
+            
+            // Mark first element as sorted
+            highlightElements([0], 'sorted');
+            highlightCodeLine(10);
+        }
+
+        // Quick Sort Algorithm with visualization
+        async function quickSort(arr = [...currentArray], low = 0, high = currentArray.length - 1) {
+            if (low < high) {
+                const pi = await partition(arr, low, high);
+                await quickSort(arr, low, pi - 1);
+                await quickSort(arr, pi + 1, high);
+            }
+        }
+
+        async function partition(arr, low, high) {
+            const pivot = arr[high];
+            let i = low - 1;
+            
+            for (let j = low; j < high; j++) {
+                highlightElements([j, high], 'comparing');
+                await sleep(visualizationSpeed);
+                
+                if (arr[j] < pivot) {
+                    i++;
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                    highlightElements([i, j], 'swapping');
+                    await swapElements(i, j);
+                    await sleep(visualizationSpeed);
+                }
+                
+                removeHighlight([j, high]);
+            }
+            
+            [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+            highlightElements([i + 1, high], 'swapping');
+            await swapElements(i + 1, high);
+            await sleep(visualizationSpeed);
+            
+            return i + 1;
+        }
+
+        // Merge Sort Algorithm with visualization
+        async function mergeSort(arr = [...currentArray], left = 0, right = currentArray.length - 1) {
+            if (left < right) {
+                const mid = Math.floor((left + right) / 2);
+                await mergeSort(arr, left, mid);
+                await mergeSort(arr, mid + 1, right);
+                await merge(arr, left, mid, right);
+            }
+        }
+
+        async function merge(arr, left, mid, right) {
+            const leftArr = arr.slice(left, mid + 1);
+            const rightArr = arr.slice(mid + 1, right + 1);
+            
+            let i = 0, j = 0, k = left;
+            
+            while (i < leftArr.length && j < rightArr.length) {
+                highlightElements([k], 'comparing');
+                await sleep(visualizationSpeed);
+                
+                if (leftArr[i] <= rightArr[j]) {
+                    arr[k] = leftArr[i];
+                    updateElementValue(k, leftArr[i]);
+                    i++;
+                } else {
+                    arr[k] = rightArr[j];
+                    updateElementValue(k, rightArr[j]);
+                    j++;
+                }
+                k++;
+                await sleep(visualizationSpeed);
+                removeHighlight([k - 1]);
+            }
+            
+            while (i < leftArr.length) {
+                arr[k] = leftArr[i];
+                updateElementValue(k, leftArr[i]);
+                highlightElements([k], 'sorted');
+                i++;
+                k++;
+                await sleep(visualizationSpeed);
+            }
+            
+            while (j < rightArr.length) {
+                arr[k] = rightArr[j];
+                updateElementValue(k, rightArr[j]);
+                highlightElements([k], 'sorted');
+                j++;
+                k++;
+                await sleep(visualizationSpeed);
+            }
+        }
+
+        // Selection Sort Algorithm
+        async function selectionSort() {
+            const arr = [...currentArray];
+            const n = arr.length;
+            
+            const code = [
+                "function selectionSort(arr) {",
+                "    let n = arr.length;",
+                "    for (let i = 0; i < n - 1; i++) {",
+                "        let minIndex = i;",
+                "        for (let j = i + 1; j < n; j++) {",
+                "            if (arr[j] < arr[minIndex]) {",
+                "                minIndex = j;",
+                "            }",
+                "        }",
+                "        [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];",
+                "    }",
+                "    return arr;",
+                "}"
+            ];
+            
+            updateCodeDisplay(code);
+            
+            for (let i = 0; i < n - 1; i++) {
+                let minIndex = i;
+                highlightCodeLine(3);
+                highlightElements([i], 'comparing');
+                await sleep(visualizationSpeed);
+                
+                for (let j = i + 1; j < n; j++) {
+                    highlightCodeLine(4);
+                    highlightElements([j], 'comparing');
+                    await sleep(visualizationSpeed);
+                    
+                    if (arr[j] < arr[minIndex]) {
+                        removeHighlight([minIndex]);
+                        minIndex = j;
+                        highlightElements([minIndex], 'swapping');
+                        highlightCodeLine(5);
+                        await sleep(visualizationSpeed);
+                    }
+                    
+                    if (j !== minIndex) removeHighlight([j]);
+                }
+                
+                if (minIndex !== i) {
+                    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+                    highlightCodeLine(9);
+                    await swapElements(i, minIndex);
+                    await sleep(visualizationSpeed);
+                }
+                
+                removeHighlight([minIndex]);
+                highlightElements([i], 'sorted');
+            }
+            
+            highlightElements([n - 1], 'sorted');
+        }
+
+        // Insertion Sort Algorithm
+        async function insertionSort() {
+            const arr = [...currentArray];
+            const n = arr.length;
+            
+            const code = [
+                "function insertionSort(arr) {",
+                "    for (let i = 1; i < arr.length; i++) {",
+                "        let key = arr[i];",
+                "        let j = i - 1;",
+                "        while (j >= 0 && arr[j] > key) {",
+                "            arr[j + 1] = arr[j];",
+                "            j--;",
+                "        }",
+                "        arr[j + 1] = key;",
+                "    }",
+                "    return arr;",
+                "}"
+            ];
+            
+            updateCodeDisplay(code);
+            highlightElements([0], 'sorted');
+            
+            for (let i = 1; i < n; i++) {
+                highlightCodeLine(1);
+                const key = arr[i];
+                let j = i - 1;
+                
+                highlightElements([i], 'comparing');
+                highlightCodeLine(2);
+                await sleep(visualizationSpeed);
+                
+                while (j >= 0 && arr[j] > key) {
+                    highlightCodeLine(4);
+                    highlightElements([j, j + 1], 'swapping');
+                    await sleep(visualizationSpeed);
+                    
+                    arr[j + 1] = arr[j];
+                    updateElementValue(j + 1, arr[j]);
+                    j--;
+                    await sleep(visualizationSpeed);
+                }
+                
+                arr[j + 1] = key;
+                updateElementValue(j + 1, key);
+                highlightCodeLine(8);
+                highlightElements([j + 1], 'sorted');
+                await sleep(visualizationSpeed);
+                
+                removeHighlight([i]);
+            }
+        }
+
+        // Binary Search Algorithm
+        async function binarySearch(target) {
+            const arr = [...currentArray].sort((a, b) => a - b);
+            currentArray = arr;
+            updateArrayDisplay();
+            
+            const code = [
+                "function binarySearch(arr, target) {",
+                "    let left = 0, right = arr.length - 1;",
+                "    while (left <= right) {",
+                "        let mid = Math.floor((left + right) / 2);",
+                "        if (arr[mid] === target) return mid;",
+                "        else if (arr[mid] < target) left = mid + 1;",
+                "        else right = mid - 1;",
+                "    }",
+                "    return -1;",
+                "}"
+            ];
+            
+            updateCodeDisplay(code);
+            
+            let left = 0, right = arr.length - 1;
+            
+            while (left <= right) {
+                highlightCodeLine(2);
+                const mid = Math.floor((left + right) / 2);
+                
+                highlightElements([left, right], 'comparing');
+                highlightElements([mid], 'swapping');
+                highlightCodeLine(3);
+                await sleep(visualizationSpeed);
+                
+                if (arr[mid] === target) {
+                    highlightCodeLine(4);
+                    highlightElements([mid], 'sorted');
+                    return mid;
+                } else if (arr[mid] < target) {
+                    highlightCodeLine(5);
+                    left = mid + 1;
+                } else {
+                    highlightCodeLine(6);
+                    right = mid - 1;
+                }
+                
+                removeHighlight([left - 1, right + 1, mid]);
+                await sleep(visualizationSpeed);
+            }
+            
+            highlightCodeLine(8);
+            return -1;
+        }
+
+        // Utility functions
+        function highlightElements(indices, className) {
+            indices.forEach(index => {
+                const element = document.getElementById(`element-${index}`);
+                if (element) {
+                    element.classList.add(className);
+                }
+            });
+        }
+
+        function removeHighlight(indices) {
+            indices.forEach(index => {
+                const element = document.getElementById(`element-${index}`);
+                if (element) {
+                    element.classList.remove('comparing', 'swapping', 'sorted');
+                }
+            });
+        }
+
+        async function swapElements(i, j) {
+            const element1 = document.getElementById(`element-${i}`);
+            const element2 = document.getElementById(`element-${j}`);
+            
+            if (element1 && element2) {
+                const temp = element1.textContent;
+                element1.textContent = element2.textContent;
+                element2.textContent = temp;
+                
+                currentArray[i] = parseInt(element2.textContent);
+                currentArray[j] = parseInt(element1.textContent);
+            }
+        }
+
+        function updateElementValue(index, value) {
+            const element = document.getElementById(`element-${index}`);
+            if (element) {
+                element.textContent = value;
+                currentArray[index] = value;
+            }
+        }
+
+        function updateArrayDisplay() {
+            const container = document.getElementById('array-container');
+            container.innerHTML = '';
+            
+            currentArray.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.textContent = value;
+                element.id = `element-${index}`;
+                container.appendChild(element);
+            });
+        }
+
+        function updateCodeDisplay(codeLines) {
+            const codeDisplay = document.getElementById('code-display');
+            codeDisplay.innerHTML = '';
+            
+            codeLines.forEach((line, index) => {
+                const codeLine = document.createElement('div');
+                codeLine.className = 'code-line';
+                codeLine.id = `code-line-${index}`;
+                codeLine.textContent = line;
+                codeDisplay.appendChild(codeLine);
+            });
+        }
+
+        function highlightCodeLine(lineIndex) {
+            // Remove previous highlights
+            document.querySelectorAll('.code-line').forEach(line => {
+                line.classList.remove('active');
+            });
+            
+            // Highlight current line
+            const currentLine = document.getElementById(`code-line-${lineIndex}`);
+            if (currentLine) {
+                currentLine.classList.add('active');
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Main control functions
+        async function startVisualization() {
+            if (isVisualizing) return;
+            if (currentArray.length === 0) generateArray();
+            
+            isVisualizing = true;
+            
+            // Clear previous highlights
+            document.querySelectorAll('.array-element').forEach(element => {
+                element.classList.remove('comparing', 'swapping', 'sorted');
+            });
+            
+            switch (currentAlgorithm) {
+                case 'bubble':
+                    await bubbleSort();
+                    break;
+                case 'quick':
+                    await quickSort();
+                    break;
+                case 'merge':
+                    await mergeSort();
+                    break;
+                case 'selection':
+                    await selectionSort();
+                    break;
+                case 'insertion':
+                    await insertionSort();
+                    break;
+                case 'binary':
+                    const target = parseInt(prompt('Enter target value to search:'));
+                    if (!isNaN(target)) {
+                        await binarySearch(target);
+                    }
+                    break;
+                default:
+                    alert('Please select an algorithm first!');
+            }
+            
+            isVisualizing = false;
+        }
+
+        function pauseVisualization() {
+            isVisualizing = false;
+        }
+
+        function resetVisualization() {
+            isVisualizing = false;
+            if (animationId) {
+                clearTimeout(animationId);
+            }
+            
+            // Clear all highlights
+            document.querySelectorAll('.array-element').forEach(element => {
+                element.classList.remove('comparing', 'swapping', 'sorted');
+            });
+            
+            document.querySelectorAll('.code-line').forEach(line => {
+                line.classList.remove('active');
+            });
+            
+            generateArray();
+        }
+
+        // Speed control
+        document.getElementById('speed-slider').addEventListener('input', function(e) {
+            const speed = parseInt(e.target.value);
+            visualizationSpeed = 1100 - (speed * 100); // Inverse relationship
+        });
+
+        // Topic management
+        function openTopic(topic) {
+            const modal = document.getElementById('topic-modal');
+            const modalContent = document.getElementById('modal-content');
+            
+            let content = '';
+            
+            switch (topic) {
+                case 'sorting':
+                    content = `
+                        <h2>Sorting Algorithms</h2>
+                        <p>Sorting is a fundamental operation in computer science. Here are the main sorting algorithms:</p>
+                        
+                        <div class="algorithm-selection">
+                            <h3>Select Algorithm:</h3>
+                            <button class="btn btn-primary" onclick="selectAlgorithm('bubble')">Bubble Sort</button>
+                            <button class="btn btn-primary" onclick="selectAlgorithm('quick')">Quick Sort</button>
+                            <button class="btn btn-primary" onclick="selectAlgorithm('merge')">Merge Sort</button>
+                            <button class="btn btn-primary" onclick="selectAlgorithm('selection')">Selection Sort</button>
+                            <button class="btn btn-primary" onclick="selectAlgorithm('insertion')">Insertion Sort</button>
+                        </div>
+                        
+                        <div class="algorithm-comparison">
+                            <h3>Time Complexity Comparison:</h3>
+                            <ul>
+                                <li><strong>Bubble Sort:</strong> O(n²) average, O(n²) worst</li>
+                                <li><strong>Quick Sort:</strong> O(n log n) average, O(n²) worst</li>
+                                <li><strong>Merge Sort:</strong> O(n log n) all cases</li>
+                                <li><strong>Selection Sort:</strong> O(n²) all cases</li>
+                                <li><strong>Insertion Sort:</strong> O(n²) average, O(n) best</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'searching':
+                    content = `
+                        <h2>Searching Algorithms</h2>
+                        <p>Searching algorithms help find specific elements in data structures.</p>
+                        
+                        <div class="algorithm-selection">
+                            <h3>Select Algorithm:</h3>
+                            <button class="btn btn-primary" onclick="selectAlgorithm('binary')">Binary Search</button>
+                            <button class="btn btn-primary" onclick="selectAlgorithm('linear')">Linear Search</button>
+                        </div>
+                        
+                        <div class="algorithm-info">
+                            <h3>Binary Search:</h3>
+                            <p>Works on sorted arrays. Time complexity: O(log n)</p>
+                            <h3>Linear Search:</h3>
+                            <p>Works on any array. Time complexity: O(n)</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'trees':
+                    content = `
+                        <h2>Tree Data Structures</h2>
+                        <p>Trees are hierarchical data structures with many applications.</p>
+                        
+                        <div class="tree-types">
+                            <h3>Types of Trees:</h3>
+                            <ul>
+                                <li><strong>Binary Tree:</strong> Each node has at most 2 children</li>
+                                <li><strong>Binary Search Tree:</strong> Left < Root < Right property</li>
+                                <li><strong>AVL Tree:</strong> Self-balancing binary search tree</li>
+                                <li><strong>Red-Black Tree:</strong> Balanced binary search tree</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="traversal-methods">
+                            <h3>Tree Traversal:</h3>
+                            <ul>
+                                <li><strong>Inorder:</strong> Left → Root → Right</li>
+                                <li><strong>Preorder:</strong> Root → Left → Right</li>
+                                <li><strong>Postorder:</strong> Left → Right → Root</li>
+                                <li><strong>Level Order:</strong> Breadth-first traversal</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'graphs':
+                    content = `
+                        <h2>Graph Algorithms</h2>
+                        <p>Graphs represent connections between entities and have many real-world applications.</p>
+                        
+                        <div class="graph-types">
+                            <h3>Graph Types:</h3>
+                            <ul>
+                                <li><strong>Directed Graph:</strong> Edges have direction</li>
+                                <li><strong>Undirected Graph:</strong> Edges are bidirectional</li>
+                                <li><strong>Weighted Graph:</strong> Edges have weights/costs</li>
+                                <li><strong>Unweighted Graph:</strong> All edges are equal</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="graph-algorithms">
+                            <h3>Key Algorithms:</h3>
+                            <ul>
+                                <li><strong>DFS:</strong> Depth-First Search</li>
+                                <li><strong>BFS:</strong> Breadth-First Search</li>
+                                <li><strong>Dijkstra's:</strong> Shortest path algorithm</li>
+                                <li><strong>Kruskal's:</strong> Minimum spanning tree</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'arrays':
+                    content = `
+                        <h2>Array Operations</h2>
+                        <p>Arrays are fundamental data structures for storing collections of elements.</p>
+                        
+                        <div class="array-operations">
+                            <h3>Common Operations:</h3>
+                            <ul>
+                                <li><strong>Access:</strong> O(1) - Direct index access</li>
+                                <li><strong>Search:</strong> O(n) - Linear search</li>
+                                <li><strong>Insert:</strong> O(n) - Shift elements</li>
+                                <li><strong>Delete:</strong> O(n) - Shift elements</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="array-techniques">
+                            <h3>Important Techniques:</h3>
+                            <ul>
+                                <li><strong>Two Pointers:</strong> Efficient for pair problems</li>
+                                <li><strong>Sliding Window:</strong> Subarray problems</li>
+                                <li><strong>Prefix Sum:</strong> Range sum queries</li>
+                                <li><strong>Binary Search:</strong> Sorted array searches</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'dp':
+                    content = `
+                        <h2>Dynamic Programming</h2>
+                        <p>DP is an optimization technique that solves complex problems by breaking them down into simpler subproblems.</p>
+                        
+                        <div class="dp-approaches">
+                            <h3>Approaches:</h3>
+                            <ul>
+                                <li><strong>Memoization:</strong> Top-down approach with caching</li>
+                                <li><strong>Tabulation:</strong> Bottom-up approach with table</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="dp-examples">
+                            <h3>Classic Problems:</h3>
+                            <ul>
+                                <li><strong>Fibonacci:</strong> Simple recursive optimization</li>
+                                <li><strong>0/1 Knapsack:</strong> Selection optimization</li>
+                                <li><strong>LCS:</strong> Longest Common Subsequence</li>
+                                <li><strong>Edit Distance:</strong> String transformation</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            modalContent.innerHTML = content;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('topic-modal').style.display = 'none';
+        }
+
+        function selectAlgorithm(algorithm) {
+            currentAlgorithm = algorithm;
+            closeModal();
+            
+            // Update algorithm info
+            const algoInfo = {
+                bubble: {
+                    name: 'Bubble Sort',
+                    description: 'Simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.',
+                    timeComplexity: 'O(n²)',
+                    spaceComplexity: 'O(1)'
+                },
+                quick: {
+                    name: 'Quick Sort',
+                    description: 'Efficient divide-and-conquer algorithm that picks a pivot element and partitions the array around it.',
+                    timeComplexity: 'O(n log n) avg, O(n²) worst',
+                    spaceComplexity: 'O(log n)'
+                },
+                merge: {
+                    name: 'Merge Sort',
+                    description: 'Divide-and-conquer algorithm that divides the array into halves, sorts them, and then merges them back together.',
+                    timeComplexity: 'O(n log n)',
+                    spaceComplexity: 'O(n)'
+                },
+                selection: {
+                    name: 'Selection Sort',
+                    description: 'Simple sorting algorithm that repeatedly finds the minimum element and places it at the beginning.',
+                    timeComplexity: 'O(n²)',
+                    spaceComplexity: 'O(1)'
+                },
+                insertion: {
+                    name: 'Insertion Sort',
+                    description: 'Simple sorting algorithm that builds the final sorted array one item at a time.',
+                    timeComplexity: 'O(n²) avg, O(n) best',
+                    spaceComplexity: 'O(1)'
+                },
+                binary: {
+                    name: 'Binary Search',
+                    description: 'Efficient algorithm for finding an item from a sorted list by repeatedly dividing the search interval in half.',
+                    timeComplexity: 'O(log n)',
+                    spaceComplexity: 'O(1)'
+                }
+            };
+            
+            const info = algoInfo[algorithm];
+            if (info) {
+                document.getElementById('algo-name').textContent = info.name;
+                document.getElementById('algo-description').textContent = info.description;
+                document.getElementById('complexity-info').innerHTML = `
+                    <span class="complexity-badge complexity-time">Time: ${info.timeComplexity}</span>
+                    <span class="complexity-badge complexity-space">Space: ${info.spaceComplexity}</span>
+                `;
+            }
+        }
+
+        // Notes functionality
+        function saveNotes() {
+            const notes = document.getElementById('notes-textarea').value;
+            const notesData = {
+                content: notes,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Store in memory (since localStorage is not available)
+            window.userNotes = notesData;
+            
+            // Show success message
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Saved!';
+            button.style.background = 'var(--success-color)';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '';
+            }, 2000);
+        }
+
+        function clearNotes() {
+            if (confirm('Are you sure you want to clear all notes?')) {
+                document.getElementById('notes-textarea').value = '';
+                window.userNotes = null;
+            }
+        }
+
+        // Load notes on page load
+        function loadNotes() {
+            if (window.userNotes && window.userNotes.content) {
+                document.getElementById('notes-textarea').value = window.userNotes.content;
+            }
+        }
+
+        // Initialize the application
+        function init() {
+            createParticles();
+            generateArray();
+            loadNotes();
+            
+            // Auto-save notes every 30 seconds
+            setInterval(() => {
+                const notes = document.getElementById('notes-textarea').value;
+                if (notes.trim()) {
+                    window.userNotes = {
+                        content: notes,
+                        timestamp: new Date().toISOString()
+                    };
+                }
+            }, 30000);
+        }
+
+        // Click outside modal to close
+        window.onclick = function(event) {
+            const modal = document.getElementById('topic-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
