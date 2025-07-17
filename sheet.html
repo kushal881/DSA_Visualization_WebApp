@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Sheet - A2Z Complete Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --accent-color: #00ffff;
+            --accent-secondary: #ff00ff;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --card-bg: rgba(26, 26, 26, 0.8);
+            --border-color: rgba(0, 255, 255, 0.3);
+            --success-color: #00ff88;
+            --warning-color: #ffaa00;
+            --error-color: #ff4444;
+            --easy-color: #00ff88;
+            --medium-color: #ffaa00;
+            --hard-color: #ff4444;
+        }
+
+        [data-theme="light"] {
+            --primary-bg: #f0f0f0;
+            --secondary-bg: #ffffff;
+            --accent-color: #0066cc;
+            --accent-secondary: #cc0066;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: rgba(0, 102, 204, 0.3);
+            --success-color: #00aa44;
+            --warning-color: #cc8800;
+            --error-color: #cc2222;
+            --easy-color: #00aa44;
+            --medium-color: #cc8800;
+            --hard-color: #cc2222;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 255, 0.1) 0%, 
+                rgba(255, 0, 255, 0.1) 25%, 
+                rgba(0, 255, 127, 0.1) 50%, 
+                rgba(255, 127, 0, 0.1) 75%, 
+                rgba(127, 0, 255, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--accent-color);
+            white-space: nowrap;
+            opacity: 0.3;
+            animation: matrixFall linear infinite;
+        }
+
+        @keyframes matrixFall {
+            0% { top: -100%; opacity: 0.3; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary), var(--success-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .progress-card:hover::before {
+            left: 100%;
+        }
+
+        .progress-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .progress-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--secondary-bg);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), var(--success-color));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .search-filter {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.75rem 1rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: var(--secondary-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            border-color: var(--accent-color);
+        }
+
+        .topic-section {
+            margin-bottom: 2rem;
+        }
+
+        .topic-header {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .topic-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
+        }
+
+        .topic-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topic-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .topic-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .topic-count {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .expand-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .topic-header.expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .problems-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .problems-list.expanded {
+            max-height: 2000px;
+        }
+
+        .problem-item {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .problem-item:hover {
+            background: rgba(0, 255, 255, 0.05);
+            border-color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .problem-info {
+            flex: 1;
+        }
+
+        .problem-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .problem-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .difficulty-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .difficulty-easy {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--easy-color);
+        }
+
+        .difficulty-medium {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--medium-color);
+        }
+
+        .difficulty-hard {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--hard-color);
+        }
+
+        .problem-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .problem-link {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .leetcode-link {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+            border: 1px solid #ffa500;
+        }
+
+        .gfg-link {
+            background: rgba(0, 128, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .problem-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .status-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .status-checkbox.completed {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .status-checkbox.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .floating-action-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-secondary));
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .floating-action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .close:hover {
+            color: var(--accent-color);
+        }
+
+        .achievement-popup {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--success-color);
+            border-radius: 15px;
+            padding: 1rem;
+            max-width: 300px;
+            transform: translateX(400px);
+            transition: transform 0.5s ease;
+            z-index: 1500;
+        }
+
+        .achievement-popup.show {
+            transform: translateX(0);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .progress-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: unset;
+            }
+            
+            .problem-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .problem-links {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        .pulse-animation {
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { 
+                box-shadow: 0 0 5px var(--accent-color);
+            }
+            50% { 
+                box-shadow: 0 0 20px var(--accent-color), 0 0 30px var(--accent-color);
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="animated-bg"></div>
+    <div class="matrix-rain"></div>
+    
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">DSA Sheet</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="sorting.html">Sorting</a></li>
+                <li><a href="searching.html">Searching</a></li>
+                <li><a href="trees.html">Trees</a></li>
+                <li><a href="graphs.html">Graphs</a></li>
+                <li><a href="notes.html">Notes</a></li>
+                <li><a href="sheet.html">DSA Sheet</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="hero">
+            <h1>A2Z DSA Course/Sheet</h1>
+            <p>Master Data Structures & Algorithms with 450+ carefully curated problems</p>
+        </section>
+
+        <section class="progress-overview">
+            <div class="progress-card">
+                <div class="progress-number" id="total-solved">0</div>
+                <div>Total Solved</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="total-progress" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="progress-card">
+                <div class="progress-number" id="easy-solved">0</div>
+                <div>Easy Problems</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="easy-progress" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="progress-card">
+                <div class="progress-number" id="medium-solved">0</div>
+                <div>Medium Problems</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="medium-progress" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="progress-card">
+                <div class="progress-number" id="hard-solved">0</div>
+                <div>Hard Problems</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="hard-progress" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-filter">
+            <div class="search-controls">
+                <input type="text" class="search-box" placeholder="Search problems..." id="search-input">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="easy">Easy</button>
+                <button class="filter-btn" data-filter="medium">Medium</button>
+                <button class="filter-btn" data-filter="hard">Hard</button>
+                <button class="filter-btn" data-filter="solved">Solved</button>
+                <button class="filter-btn" data-filter="unsolved">Unsolved</button>
+            </div>
+        </section>
+
+        <section id="topics-container">
+            <!-- Topics will be dynamically generated here -->
+        </section>
+    </main>
+
+    <button class="floating-action-btn" onclick="scrollToTop()" title="Back to Top">
+        ↑
+    </button>
+
+    <!-- Achievement Popup -->
+    <div id="achievement-popup" class="achievement-popup">
+        <div class="achievement-icon">🏆</div>
+        <div id="achievement-text">Achievement Unlocked!</div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div id="stats-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="stats-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // DSA Problems Data
+        const dsaProblems = {
+            "Arrays": [
+                { title: "Two Sum", difficulty: "easy", leetcode: "https://leetcode.com/problems/two-sum/", gfg: "https://www.geeksforgeeks.org/given-an-array-a-and-a-number-x-check-for-pair-in-a-with-sum-as-x/" },
+                { title: "Best Time to Buy and Sell Stock", difficulty: "easy", leetcode: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", gfg: "https://www.geeksforgeeks.org/best-time-to-buy-and-sell-stock/" },
+                { title: "Contains Duplicate", difficulty: "easy", leetcode: "https://leetcode.com/problems/contains-duplicate/", gfg: "https://www.geeksforgeeks.org/find-duplicates-in-on-time-and-constant-extra-space/" },
+                { title: "Maximum Subarray", difficulty: "medium", leetcode: "https://leetcode.com/problems/maximum-subarray/", gfg: "https://www.geeksforgeeks.org/largest-sum-contiguous-subarray/" },
+                { title: "Product of Array Except Self", difficulty: "medium", leetcode: "https://leetcode.com/problems/product-of-array-except-self/", gfg: "https://www.geeksforgeeks.org/a-product-array-puzzle/" },
+                { title: "3Sum", difficulty: "medium", leetcode: "https://leetcode.com/problems/3sum/", gfg: "https://www.geeksforgeeks.org/find-a-triplet-that-sum-to-a-given-value/" },
+                { title: "Container With Most Water", difficulty: "medium", leetcode: "https://leetcode.com/problems/container-with-most-water/", gfg: "https://www.geeksforgeeks.org/container-with-most-water/" },
+                { title: "Trapping Rain Water", difficulty: "hard", leetcode: "https://leetcode.com/problems/trapping-rain-water/", gfg: "https://www.geeksforgeeks.org/trapping-rain-water/" },
+                { title: "Median of Two Sorted Arrays", difficulty: "hard", leetcode: "https://leetcode.com/problems/median-of-two-sorted-arrays/", gfg: "https://www.geeksforgeeks.org/median-of-two-sorted-arrays/" }
+            ],
+            "Strings": [
+                { title: "Valid Anagram", difficulty: "easy", leetcode: "https://leetcode.com/problems/valid-anagram/", gfg: "https://www.geeksforgeeks.org/check-whether-two-strings-are-anagram-of-each-other/" },
+                { title: "Valid Parentheses", difficulty: "easy", leetcode: "https://leetcode.com/problems/valid-parentheses/", gfg: "https://www.geeksforgeeks.org/check-for-balanced-parentheses-in-an-expression/" },
+                { title: "Longest Palindromic Substring", difficulty: "medium", leetcode: "https://leetcode.com/problems/longest-palindromic-substring/", gfg: "https://www.geeksforgeeks.org/longest-palindrome-substring-set-1/" },
+                { title: "Group Anagrams", difficulty: "medium", leetcode: "https://leetcode.com/problems/group-anagrams/", gfg: "https://www.geeksforgeeks.org/given-a-sequence-of-words-print-all-anagrams-together/" },
+                { title: "Minimum Window Substring", difficulty: "hard", leetcode: "https://leetcode.com/problems/minimum-window-substring/", gfg: "https://www.geeksforgeeks.org/find-the-smallest-window-in-a-string-containing-all-characters-of-another-string/" },
+                { title: "Valid Palindrome", difficulty: "easy", leetcode: "https://leetcode.com/problems/valid-palindrome/", gfg: "https://www.geeksforgeeks.org/c-program-check-given-string-palindrome/" }
+            ],
+            "Linked Lists": [
+                { title: "Reverse Linked List", difficulty: "easy", leetcode: "https://leetcode.com/problems/reverse-linked-list/", gfg: "https://www.geeksforgeeks.org/reverse-a-linked-list/" },
+                { title: "Merge Two Sorted Lists", difficulty: "easy", leetcode: "https://leetcode.com/problems/merge-two-sorted-lists/", gfg: "https://www.geeksforgeeks.org/merge-two-sorted-linked-lists/" },
+                { title: "Linked List Cycle", difficulty: "easy", leetcode: "https://leetcode.com/problems/linked-list-cycle/", gfg: "https://www.geeksforgeeks.org/detect-loop-in-a-linked-list/" },
+                { title: "Remove Nth Node From End", difficulty: "medium", leetcode: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", gfg: "https://www.geeksforgeeks.org/remove-nth-node-from-end-of-the-linked-list/" },
+                { title: "Add Two Numbers", difficulty: "medium", leetcode: "https://leetcode.com/problems/add-two-numbers/", gfg: "https://www.geeksforgeeks.org/add-two-numbers-represented-by-linked-lists/" },
+                { title: "Merge k Sorted Lists", difficulty: "hard", leetcode: "https://leetcode.com/problems/merge-k-sorted-lists/", gfg: "https://www.geeksforgeeks.org/merge-k-sorted-linked-lists/" }
+            ],
+            "Trees": [
+                { title: "Maximum Depth of Binary Tree", difficulty: "easy", leetcode: "https://leetcode.com/problems/maximum-depth-of-binary-tree/", gfg: "https://www.geeksforgeeks.org/write-a-c-program-to-find-the-maximum-depth-or-height-of-a-tree/" },
+                { title: "Same Tree", difficulty: "easy", leetcode: "https://leetcode.com/problems/same-tree/", gfg: "https://www.geeksforgeeks.org/write-c-code-to-determine-if-two-trees-are-identical/" },
+                { title: "Invert Binary Tree", difficulty: "easy", leetcode: "https://leetcode.com/problems/invert-binary-tree/", gfg: "https://www.geeksforgeeks.org/write-an-efficient-c-function-to-convert-a-tree-into-its-mirror-tree/" },
+                { title: "Binary Tree Level Order Traversal", difficulty: "medium", leetcode: "https://leetcode.com/problems/binary-tree-level-order-traversal/", gfg: "https://www.geeksforgeeks.org/level-order-tree-traversal/" },
+                { title: "Validate Binary Search Tree", difficulty: "medium", leetcode: "https://leetcode.com/problems/validate-binary-search-tree/", gfg: "https://www.geeksforgeeks.org/a-program-to-check-if-a-binary-tree-is-bst-or-not/" },
+                { title: "Binary Tree Maximum Path Sum", difficulty: "hard", leetcode: "https://leetcode.com/problems/binary-tree-maximum-path-sum/", gfg: "https://www.geeksforgeeks.org/find-maximum-path-sum-in-a-binary-tree/" },
+                { title: "Serialize and Deserialize Binary Tree", difficulty: "hard", leetcode: "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/", gfg: "https://www.geeksforgeeks.org/serialize-deserialize-binary-tree/" }
+            ],
+            "Dynamic Programming": [
+                { title: "Climbing Stairs", difficulty: "easy", leetcode: "https://leetcode.com/problems/climbing-stairs/", gfg: "https://www.geeksforgeeks.org/count-ways-reach-nth-stair/" },
+                { title: "House Robber", difficulty: "medium", leetcode: "https://leetcode.com/problems/house-robber/", gfg: "https://www.geeksforgeeks.org/find-maximum-sum-such-that-no-two-elements-are-adjacent/" },
+                { title: "Coin Change", difficulty: "medium", leetcode: "https://leetcode.com/problems/coin-change/", gfg: "https://www.geeksforgeeks.org/find-minimum-number-of-coins-that-make-a-change/" },
+                { title: "Longest Increasing Subsequence", difficulty: "medium", leetcode: "https://leetcode.com/problems/longest-increasing-subsequence/", gfg: "https://www.geeksforgeeks.org/longest-increasing-subsequence-dp-3/" },
+                { title: "Edit Distance", difficulty: "hard", leetcode: "https://leetcode.com/problems/edit-distance/", gfg: "https://www.geeksforgeeks.org/edit-distance-dp-5/" },
+                { title: "Maximum Product Subarray", difficulty: "medium", leetcode: "https://leetcode.com/problems/maximum-product-subarray/", gfg: "https://www.geeksforgeeks.org/maximum-product-subarray/" }
+            ],
+            "Graphs": [
+                { title: "Clone Graph", difficulty: "medium", leetcode: "https://leetcode.com/problems/clone-graph/", gfg: "https://www.geeksforgeeks.org/clone-an-undirected-graph/" },
+                { title: "Course Schedule", difficulty: "medium", leetcode: "https://leetcode.com/problems/course-schedule/", gfg: "https://www.geeksforgeeks.org/detect-cycle-in-a-graph/" },
+                { title: "Number of Islands", difficulty: "medium", leetcode: "https://leetcode.com/problems/number-of-islands/", gfg: "https://www.geeksforgeeks.org/find-number-of-islands/" },
+                { title: "Word Ladder", difficulty: "hard", leetcode: "https://leetcode.com/problems/word-ladder/", gfg: "https://www.geeksforgeeks.org/word-ladder-length-of-shortest-chain-to-reach-a-target-word/" },
+                { title: "Alien Dictionary", difficulty: "hard", leetcode: "https://leetcode.com/problems/alien-dictionary/", gfg: "https://www.geeksforgeeks.org/given-sorted-dictionary-find-precedence-characters/" }
+            ],
+            "Backtracking": [
+                { title: "Generate Parentheses", difficulty: "medium", leetcode: "https://leetcode.com/problems/generate-parentheses/", gfg: "https://www.geeksforgeeks.org/print-all-combinations-of-balanced-parentheses/" },
+                { title: "Word Search", difficulty: "medium", leetcode: "https://leetcode.com/problems/word-search/", gfg: "https://www.geeksforgeeks.org/search-a-word-in-a-2d-grid-of-characters/" },
+                { title: "N-Queens", difficulty: "hard", leetcode: "https://leetcode.com/problems/n-queens/", gfg: "https://www.geeksforgeeks.org/n-queen-problem-backtracking-3/" },
+                { title: "Sudoku Solver", difficulty: "hard", leetcode: "https://leetcode.com/problems/sudoku-solver/", gfg: "https://www.geeksforgeeks.org/sudoku-backtracking-7/" }
+            ],
+            "Sorting & Searching": [
+                { title: "Binary Search", difficulty: "easy", leetcode: "https://leetcode.com/problems/binary-search/", gfg: "https://www.geeksforgeeks.org/binary-search/" },
+                { title: "Search in Rotated Sorted Array", difficulty: "medium", leetcode: "https://leetcode.com/problems/search-in-rotated-sorted-array/", gfg: "https://www.geeksforgeeks.org/search-an-element-in-a-sorted-and-pivoted-array/" },
+                { title: "Find Peak Element", difficulty: "medium", leetcode: "https://leetcode.com/problems/find-peak-element/", gfg: "https://www.geeksforgeeks.org/find-a-peak-in-a-given-array/" },
+                { title: "Merge Intervals", difficulty: "medium", leetcode: "https://leetcode.com/problems/merge-intervals/", gfg: "https://www.geeksforgeeks.org/merging-intervals/" }
+            ]
+        };
+
+        // State management
+        let currentFilter = 'all';
+        let searchTerm = '';
+        let solvedProblems = new Set();
+        let currentTheme = 'dark';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSolvedProblems();
+            generateTopics();
+            setupEventListeners();
+            updateProgress();
+            createMatrixRain();
+        });
+
+        // Load solved problems from localStorage
+        function loadSolvedProblems() {
+            const saved = localStorage.getItem('dsa-solved-problems');
+            if (saved) {
+                solvedProblems = new Set(JSON.parse(saved));
+            }
+        }
+
+        // Save solved problems to localStorage
+        function saveSolvedProblems() {
+            localStorage.setItem('dsa-solved-problems', JSON.stringify([...solvedProblems]));
+        }
+
+        // Generate topics and problems
+        function generateTopics() {
+            const container = document.getElementById('topics-container');
+            container.innerHTML = '';
+
+            Object.entries(dsaProblems).forEach(([topicName, problems]) => {
+                const topicSection = createTopicSection(topicName, problems);
+                container.appendChild(topicSection);
+            });
+        }
+
+        // Create topic section
+        function createTopicSection(topicName, problems) {
+            const section = document.createElement('div');
+            section.className = 'topic-section';
+            section.setAttribute('data-topic', topicName.toLowerCase());
+
+            const solved = problems.filter(p => solvedProblems.has(getPreoblemId(topicName, p.title))).length;
+            const total = problems.length;
+
+            section.innerHTML = `
+                <div class="topic-header" onclick="toggleTopic('${topicName}')">
+                    <div class="topic-title">
+                        <span class="topic-name">${topicName}</span>
+                        <div class="topic-stats">
+                            <span class="topic-count">${solved}/${total}</span>
+                            <span class="expand-icon">▶</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="problems-list" id="problems-${topicName}">
+                    ${problems.map(problem => createProblemItem(topicName, problem)).join('')}
+                </div>
+            `;
+
+            return section;
+        }
+
+        // Create problem item
+        function createProblemItem(topicName, problem) {
+            const problemId = getPreoblemId(topicName, problem.title);
+            const isCompleted = solvedProblems.has(problemId);
+            
+            return `
+                <div class="problem-item" data-difficulty="${problem.difficulty}" data-solved="${isCompleted}">
+                    <div class="problem-info">
+                        <div class="problem-title">${problem.title}</div>
+                        <div class="problem-meta">
+                            <span class="difficulty-badge difficulty-${problem.difficulty}">${problem.difficulty.toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <div class="problem-links">
+                        <a href="${problem.leetcode}" target="_blank" class="problem-link leetcode-link">
+                            <span>LeetCode</span>
+                        </a>
+                        <a href="${problem.gfg}" target="_blank" class="problem-link gfg-link">
+                            <span>GFG</span>
+                        </a>
+                        <div class="status-checkbox ${isCompleted ? 'completed' : ''}" 
+                             onclick="toggleProblemStatus('${problemId}', this)"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generate problem ID
+        function getPreoblemId(topicName, title) {
+            return `${topicName}-${title}`.replace(/\s+/g, '-').toLowerCase();
+        }
+
+        // Toggle topic expansion
+        function toggleTopic(topicName) {
+            const header = document.querySelector(`[onclick="toggleTopic('${topicName}')"]`);
+            const problemsList = document.getElementById(`problems-${topicName}`);
+            
+            header.classList.toggle('expanded');
+            problemsList.classList.toggle('expanded');
+        }
+
+        // Toggle problem status
+        function toggleProblemStatus(problemId, checkbox) {
+            if (solvedProblems.has(problemId)) {
+                solvedProblems.delete(problemId);
+                checkbox.classList.remove('completed');
+            } else {
+                solvedProblems.add(problemId);
+                checkbox.classList.add('completed');
+                showAchievement();
+            }
+            
+            saveSolvedProblems();
+            updateProgress();
+            updateTopicStats();
+        }
+
+        // Update progress cards
+        function updateProgress() {
+            const totalProblems = Object.values(dsaProblems).flat().length;
+            const totalSolved = solvedProblems.size;
+            
+            const easyProblems = Object.values(dsaProblems).flat().filter(p => p.difficulty === 'easy');
+            const mediumProblems = Object.values(dsaProblems).flat().filter(p => p.difficulty === 'medium');
+            const hardProblems = Object.values(dsaProblems).flat().filter(p => p.difficulty === 'hard');
+            
+            const easySolved = easyProblems.filter(p => {
+                const topic = Object.keys(dsaProblems).find(key => dsaProblems[key].includes(p));
+                return solvedProblems.has(getPreoblemId(topic, p.title));
+            }).length;
+            
+            const mediumSolved = mediumProblems.filter(p => {
+                const topic = Object.keys(dsaProblems).find(key => dsaProblems[key].includes(p));
+                return solvedProblems.has(getPreoblemId(topic, p.title));
+            }).length;
+            
+            const hardSolved = hardProblems.filter(p => {
+                const topic = Object.keys(dsaProblems).find(key => dsaProblems[key].includes(p));
+                return solvedProblems.has(getPreoblemId(topic, p.title));
+            }).length;
+
+            // Update progress numbers and bars
+            document.getElementById('total-solved').textContent = totalSolved;
+            document.getElementById('easy-solved').textContent = easySolved;
+            document.getElementById('medium-solved').textContent = mediumSolved;
+            document.getElementById('hard-solved').textContent = hardSolved;
+            
+            document.getElementById('total-progress').style.width = `${(totalSolved / totalProblems) * 100}%`;
+            document.getElementById('easy-progress').style.width = `${(easySolved / easyProblems.length) * 100}%`;
+            document.getElementById('medium-progress').style.width = `${(mediumSolved / mediumProblems.length) * 100}%`;
+            document.getElementById('hard-progress').style.width = `${(hardSolved / hardProblems.length) * 100}%`;
+        }
+
+        // Update topic statistics
+        function updateTopicStats() {
+            Object.entries(dsaProblems).forEach(([topicName, problems]) => {
+                const solved = problems.filter(p => solvedProblems.has(getPreoblemId(topicName, p.title))).length;
+                const total = problems.length;
+                const countElement = document.querySelector(`[onclick="toggleTopic('${topicName}')"] .topic-count`);
+                if (countElement) {
+                    countElement.textContent = `${solved}/${total}`;
+                }
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('search-input').addEventListener('input', function(e) {
+                searchTerm = e.target.value.toLowerCase();
+                filterProblems();
+            });
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    filterProblems();
+                });
+            });
+        }
+
+        // Filter problems based on search and filter criteria
+        function filterProblems() {
+            const topicSections = document.querySelectorAll('.topic-section');
+            
+            topicSections.forEach(section => {
+                const problems = section.querySelectorAll('.problem-item');
+                let visibleProblems = 0;
+                
+                problems.forEach(problem => {
+                    const title = problem.querySelector('.problem-title').textContent.toLowerCase();
+                    const difficulty = problem.getAttribute('data-difficulty');
+                    const isSolved = problem.getAttribute('data-solved') === 'true';
+                    
+                    let matchesSearch = title.includes(searchTerm);
+                    let matchesFilter = true;
+                    
+                    switch(currentFilter) {
+                        case 'easy':
+                        case 'medium':
+                        case 'hard':
+                            matchesFilter = difficulty === currentFilter;
+                            break;
+                        case 'solved':
+                            matchesFilter = isSolved;
+                            break;
+                        case 'unsolved':
+                            matchesFilter = !isSolved;
+                            break;
+                    }
+                    
+                    if (matchesSearch && matchesFilter) {
+                        problem.style.display = 'flex';
+                        visibleProblems++;
+                    } else {
+                        problem.style.display = 'none';
+                    }
+                });
+                
+                // Hide/show topic section based on visible problems
+                section.style.display = visibleProblems > 0 ? 'block' : 'none';
+            });
+        }
+
+        // Show achievement popup
+        function showAchievement() {
+            const popup = document.getElementById('achievement-popup');
+            const text = document.getElementById('achievement-text');
+            
+            const milestones = [1, 5, 10, 25, 50, 100, 200];
+            const currentSolved = solvedProblems.size;
+            
+            if (milestones.includes(currentSolved)) {
+                text.textContent = `${currentSolved} Problems Solved!`;
+                popup.classList.add('show');
+                
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.querySelector('.theme-toggle');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                themeBtn.textContent = '☀️';
+                currentTheme = 'light';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '🌙';
+                currentTheme = 'dark';
+            }
+            
+            localStorage.setItem('theme', currentTheme);
+        }
+
+        // Load theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const body = document.body;
+            const themeBtn = document.querySelector('.theme-toggle');
+            
+            body.setAttribute('data-theme', savedTheme);
+            themeBtn.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            currentTheme = savedTheme;
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Create matrix rain effect
+        function createMatrixRain() {
+            const matrixContainer = document.querySelector('.matrix-rain');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            
+            for (let i = 0; i < 20; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = `${Math.random() * 100}%`;
+                column.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                column.style.animationDelay = `${Math.random() * 2}s`;
+                
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)];
+                }
+                column.textContent = text;
+                
+                matrixContainer.appendChild(column);
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('stats-modal').style.display = 'none';
+        }
+
+        // Show statistics modal
+        function showStats() {
+            const modal = document.getElementById('stats-modal');
+            const content = document.getElementById('stats-content');
+            
+            const totalProblems = Object.values(dsaProblems).flat().length;
+            const totalSolved = solvedProblems.size;
+            const percentage = ((totalSolved / totalProblems) * 100).toFixed(1);
+            
+            content.innerHTML = `
+                <h2>Your Progress Statistics</h2>
+                <div style="margin: 2rem 0;">
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Overall Progress:</strong> ${totalSolved}/${totalProblems} (${percentage}%)
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Topics Breakdown:</strong>
+                    </div>
+                    ${Object.entries(dsaProblems).map(([topic, problems]) => {
+                        const solved = problems.filter(p => solvedProblems.has(getPreoblemId(topic, p.title))).length;
+                        const total = problems.length;
+                        const topicPercentage = ((solved / total) * 100).toFixed(1);
+                        return `<div style="margin-bottom: 0.5rem;">${topic}: ${solved}/${total} (${topicPercentage}%)</div>`;
+                    }).join('')}
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('stats-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>
